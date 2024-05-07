@@ -1,17 +1,15 @@
 'use strict';
+const basicAuthHeaderForProxyUrl = require("./basic-auth-header-for-proxy-url")
 
 module.exports = self => {
-	const {username, password} = self.proxyOptions.url;
+	const authorization = basicAuthHeaderForProxyUrl(self.proxyOptions.url);
 
-	if (username || password) {
-		const data = `${username}:${password}`;
-		const authorization = `Basic ${Buffer.from(data).toString('base64')}`;
-
-		return {
-			'proxy-authorization': authorization,
-			authorization
-		};
+	if (authorization === undefined) {
+		return {};
 	}
 
-	return {};
+	return {
+		'proxy-authorization': authorization,
+		authorization
+	};
 };
